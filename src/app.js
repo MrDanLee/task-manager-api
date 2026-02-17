@@ -2,20 +2,17 @@ const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const taskRoutes = require('./routes/taskRoutes');
-const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
-// Middlewares
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// Ruta de bienvenida
 app.get('/', (req, res) => {
   res.json({
-    message: '✅ Task Manager API funcionando',
+    message: 'Task Manager API funcionando',
     version: '1.0.0',
+    author: 'Daniel Lozano',
     endpoints: {
       auth: '/api/auth',
       tasks: '/api/tasks'
@@ -23,11 +20,14 @@ app.get('/', (req, res) => {
   });
 });
 
-// Rutas
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 
-// Manejo de errores
-app.use(errorHandler);
+app.use((err, req, res, next) => {
+  console.error('Error:', err.message);
+  res.status(err.statusCode || 500).json({
+    error: err.message || 'Error del servidor'
+  });
+});
 
 module.exports = app;

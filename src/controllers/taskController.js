@@ -1,48 +1,22 @@
 const Task = require('../models/Task');
-const { Op } = require('sequelize');
 
-exports.getTasks = async (req, res, next) => {
+const getTasks = (req, res, next) => {
   try {
-    const { status, priority, search, page = 1, limit = 10 } = req.query;
-
-    const where = { userId: req.user.id };
-
-    if (status) where.status = status;
-    if (priority) where.priority = priority;
-    if (search) {
-      where[Op.or] = [
-        { title: { [Op.like]: `%${search}%` } },
-        { description: { [Op.like]: `%${search}%` } }
-      ];
-    }
-
-    const offset = (page - 1) * limit;
-
-    const { count, rows } = await Task.findAndCountAll({
-      where,
-      limit: parseInt(limit),
-      offset: parseInt(offset),
-      order: [['createdAt', 'DESC']]
+    const tasks = Task.findAll(req.user.id, {
+      status: req.query.status,
+      priority: req.query.priority,
+      search: req.query.search
     });
 
-    res.json({
-      tasks: rows,
-      pagination: {
-        total: count,
-        page: parseInt(page),
-        pages: Math.ceil(count / limit)
-      }
-    });
+    res.json({ total: tasks.length, tasks });
   } catch (error) {
     next(error);
   }
 };
 
-exports.getTask = async (req, res, next) => {
+const getTask = (req, res, next) => {
   try {
-    const task = await Task.findOne({
-      where: { id: req.params.id, userId: req.user.id }
-    });
+    const task = Task.findById(parseInt(req.params.id), req.user.id);
 
     if (!task) {
       return res.status(404).json({ error: 'Tarea no encontrada' });
@@ -54,17 +28,21 @@ exports.getTask = async (req, res, next) => {
   }
 };
 
-exports.createTask = async (req, res, next) => {
+const createTask = (req, res, next) => {
   try {
     const { title, description, status, priority, dueDate } = req.body;
 
-    const task = await Task.create({
+    if (!title) {
+      return res.status(400).json({ error: 'El titulo es requerido' });
+    }
+
+    const task = Task.create({
+      userId: req.user.id,
       title,
       description,
       status,
       priority,
-      dueDate,
-      userId: req.user.id
+      dueDate
     });
 
     res.status(201).json({
@@ -76,41 +54,41 @@ exports.createTask = async (req, res, next) => {
   }
 };
 
-exports.updateTask = async (req, res, next) => {
+const updateTask = (req, res, next) => {
   try {
-    const task = await Task.findOne({
-      where: { id: req.params.id, userId: req.user.id }
-    });
+    const task = Task.update(parseInt(req.params.id), req.user.id, req.body);
 
     if (!task) {
       return res.status(404).json({ error: 'Tarea no encontrada' });
     }
 
-    await task.update(req.body);
-
-    res.json({
-      message: 'Tarea actualizada',
-      task
-    });
+    res.json({ message: 'Tarea actualizada', task });
   } catch (error) {
     next(error);
   }
 };
 
-exports.deleteTask = async (req, res, next) => {
+const deleteTask = (req, res, next) => {
   try {
-    const task = await Task.findOne({
-      where: { id: req.params.id, userId: req.user.id }
-    });
+    const deleted = Task.delete(parseInt(req.params.id), req.user.id);
 
-    if (!task) {
+    if (!deleted) {
       return res.status(404).json({ error: 'Tarea no encontrada' });
     }
 
-    await task.destroy();
-
-    res.json({ message: 'Tarea eliminada' });
+    res.json({ message: 'Tarea eliminada exitosamente' });
   } catch (error) {
     next(error);
   }
 };
+
+const getStats = (req, res, next) => {
+  try {
+    const stats = Task.getStats(req.user.id);
+    res.json({ stats });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getTasks, getTask, createTask, updateTask, deleteTask, getStats };

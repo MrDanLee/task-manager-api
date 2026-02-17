@@ -1,45 +1,44 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const db = require('../config/database');
 const bcrypt = require('bcryptjs');
 
-const User = sequelize.define('User', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    unique: true,
-    validate: {
-      isEmail: true
-    }
-  },
-  password: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  role: {
-    type: DataTypes.ENUM('user', 'admin'),
-    defaultValue: 'user'
-  }
-}, {
-  hooks: {
-    beforeCreate: async (user) => {
-      if (user.password) {
-        user.password = await bcrypt.hash(user.password, 10);
-      }
-    }
-  }
-});
+class User {
+  static async create(userData) {
+    const { name, email, password } = userData;
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-User.prototype.comparePassword = async function (candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
-};
+    const user = {
+      id: db.counters.userId++,
+      name,
+      email,
+      password: hashedPassword,
+      role: 'user',
+      createdAt: new Date()
+    };
+
+    db.users.push(user);
+    return user;
+  }
+
+  static findByEmail(email) {
+    return db.users.find(u => u.email === email);
+  }
+
+  static findById(id) {
+    return db.users.find(u => u.id === id);
+  }
+
+  static async comparePassword(candidatePassword, hashedPassword) {
+    return await bcrypt.compare(candidatePassword, hashedPassword);
+  }
+
+  static getPublicData(user) {
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role
+    };
+  }
+}
 
 module.exports = User;
