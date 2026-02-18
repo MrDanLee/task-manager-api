@@ -1,61 +1,54 @@
 # 📝 Task Manager API
 
-API REST completa para gestión de tareas con autenticación JWT y roles de usuario.
+Complete REST API for task management with JWT authentication and role-based access control.
 
-## 🚀 Características
+## 🚀 Features
 
-- ✅ Autenticación JWT con roles (admin/usuario)
-- ✅ CRUD completo de tareas
-- ✅ Filtros, paginación y búsqueda
-- ✅ Protección de rutas con middleware
-- ✅ Hashing de contraseñas con bcrypt
-- ✅ Validación de datos
+- ✅ JWT authentication with roles (admin/user)
+- ✅ Full CRUD operations for tasks
+- ✅ Filters, pagination, and search
+- ✅ Route protection with middleware
+- ✅ Password hashing with bcrypt
+- ✅ Data validation
 
-## 🛠️ Tecnologías
+## 🛠️ Technologies
 
 - Node.js
 - Express.js
-- MySQL
-- Sequelize ORM
 - JWT (jsonwebtoken)
 - bcrypt
 
-## 📦 Instalación
+## 📦 Installation
 
-1. Clona el repositorio
+1. Clone the repository
 ```bash
 git clone https://github.com/MrDanLee/task-manager-api.git
 cd task-manager-api
 ```
 
-2. Instala dependencias
+2. Install dependencies
 ```bash
 npm install
 ```
 
-3. Configura variables de entorno
+3. Configure environment variables
 ```bash
 cp .env.example .env
-# Edita .env con tus credenciales de MySQL
+# Edit .env with your settings
 ```
 
-4. Crea la base de datos
-```sql
-CREATE DATABASE task_manager;
-```
-
-5. Inicia el servidor
+4. Start the server
 ```bash
 npm run dev
 ```
 
-El servidor correrá en `http://localhost:3000`
+Server will run at `http://localhost:3000`
 
 ## 🔗 Endpoints
 
-### Autenticación
+### Authentication
 
-**Registro**
+**Register**
 ```http
 POST /api/auth/register
 Content-Type: application/json
@@ -78,42 +71,42 @@ Content-Type: application/json
 }
 ```
 
-**Obtener perfil**
+**Get profile**
 ```http
 GET /api/auth/me
 Authorization: Bearer {token}
 ```
 
-### Tareas
+### Tasks
 
-**Listar tareas** (con filtros y paginación)
+**List tasks** (with filters and pagination)
 ```http
-GET /api/tasks?status=pending&priority=high&page=1&limit=10
+GET /api/tasks?status=pending&priority=high
 Authorization: Bearer {token}
 ```
 
-**Crear tarea**
+**Create task**
 ```http
 POST /api/tasks
 Authorization: Bearer {token}
 Content-Type: application/json
 
 {
-  "title": "Terminar proyecto",
-  "description": "Finalizar API de tareas",
+  "title": "Complete project",
+  "description": "Finish the task API",
   "status": "in_progress",
   "priority": "high",
   "dueDate": "2025-12-31"
 }
 ```
 
-**Obtener tarea**
+**Get task**
 ```http
 GET /api/tasks/:id
 Authorization: Bearer {token}
 ```
 
-**Actualizar tarea**
+**Update task**
 ```http
 PUT /api/tasks/:id
 Authorization: Bearer {token}
@@ -124,26 +117,32 @@ Content-Type: application/json
 }
 ```
 
-**Eliminar tarea**
+**Delete task**
 ```http
 DELETE /api/tasks/:id
 Authorization: Bearer {token}
 ```
 
-## 🧪 Probar con Postman
+**Get statistics**
+```http
+GET /api/tasks/stats
+Authorization: Bearer {token}
+```
 
-1. Importa la colección (próximamente)
-2. Crea un usuario con `/api/auth/register`
-3. Haz login con `/api/auth/login`
-4. Copia el token recibido
-5. Úsalo en el header `Authorization: Bearer {token}`
+## 🧪 Testing with Postman
 
-## 👤 Autor
+1. Register a user with `/api/auth/register`
+2. Login with `/api/auth/login`
+3. Copy the received token
+4. Use it in the header `Authorization: Bearer {token}`
+
+## 👤 Author
 
 Daniel Andrés Lozano Meriño
 - GitHub: [@MrDanLee](https://github.com/MrDanLee)
 - Email: daniel23lozano@gmail.com
+- Portfolio: [mrdanlee.github.io](https://mrdanlee.github.io)
 
-## 📝 Licencia
+## 📝 License
 
 MIT

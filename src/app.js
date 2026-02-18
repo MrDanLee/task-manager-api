@@ -10,7 +10,7 @@ app.use(express.json());
 
 app.get('/', (req, res) => {
   res.json({
-    message: 'Task Manager API funcionando',
+    message: 'Task Manager API is running',
     version: '1.0.0',
     author: 'Daniel Lozano',
     endpoints: {
@@ -26,7 +26,7 @@ app.use('/api/tasks', taskRoutes);
 app.use((err, req, res, next) => {
   console.error('Error:', err.message);
   res.status(err.statusCode || 500).json({
-    error: err.message || 'Error del servidor'
+    error: err.message || 'Server error'
   });
 });
 
