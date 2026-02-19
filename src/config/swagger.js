@@ -30,7 +30,7 @@ const options = {
         description: 'Development server'
       },
       {
-        url: 'https://task-api-prod.onrender.com',
+        url: 'https://task-manager-api-8jb5.onrender.com',
         description: 'Production server'
       }
     ],
