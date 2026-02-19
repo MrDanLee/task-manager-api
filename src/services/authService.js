@@ -31,16 +31,20 @@ class AuthService {
   }
 
   /**
-   * Verify and decode JWT token
-   */
+  * Verify and decode JWT token
+  */
   verifyToken(token) {
     try {
       return jwt.verify(token, process.env.JWT_SECRET);
     } catch (error) {
       if (error.name === 'TokenExpiredError') {
-        throw new Error('Token expired');
+        const err = new Error('Token expired');
+        err.name = 'TokenExpiredError';
+        throw err;
       }
-      throw new Error('Invalid token');
+      const err = new Error('Invalid token');
+      err.name = 'JsonWebTokenError';
+      throw err;
     }
   }
 

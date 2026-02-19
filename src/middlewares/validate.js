@@ -6,8 +6,6 @@ const { createError } = require('../utils/ApiError');
  * 
  * Checks for validation errors from express-validator
  * and returns them in a consistent format
- * 
- * Usage: router.post('/endpoint', validationSchema, validate, controller)
  */
 const validate = (req, res, next) => {
   const errors = validationResult(req);
@@ -18,9 +16,10 @@ const validate = (req, res, next) => {
       message: err.msg
     }));
 
-    throw createError.unprocessable('Validation failed', {
-      errors: errorMessages
-    });
+    const error = createError.unprocessable('Validation failed');
+    error.errors = errorMessages;
+
+    throw error;
   }
 
   next();
