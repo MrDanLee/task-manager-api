@@ -1,5 +1,9 @@
 const db = require('../config/database');
 
+/**
+ * Task model
+ */
+
 class Task {
   static create(taskData) {
     const task = {
@@ -18,8 +22,12 @@ class Task {
     return task;
   }
 
-  static findAll(userId, filters = {}) {
-    let tasks = db.tasks.filter(t => t.userId === userId);
+  static findAll(filters = {}) {
+    let tasks = [...db.tasks];
+
+    if (filters.userId) {
+      tasks = tasks.filter(t => t.userId === filters.userId);
+    }
 
     if (filters.status) {
       tasks = tasks.filter(t => t.status === filters.status);
@@ -37,45 +45,46 @@ class Task {
       );
     }
 
+    // Sort by most recent first
     tasks.sort((a, b) => b.createdAt - a.createdAt);
+
     return tasks;
   }
 
-  static findById(taskId, userId) {
-    return db.tasks.find(t => t.id === taskId && t.userId === userId);
+  static findById(taskId) {
+    return db.tasks.find(t => t.id === taskId);
   }
 
-  static update(taskId, userId, updateData) {
-    const task = this.findById(taskId, userId);
+  static update(taskId, updateData) {
+    const taskIndex = db.tasks.findIndex(t => t.id === taskId);
 
-    if (!task) return null;
+    if (taskIndex === -1) return null;
 
-    if (updateData.title !== undefined) task.title = updateData.title;
-    if (updateData.description !== undefined) task.description = updateData.description;
-    if (updateData.status !== undefined) task.status = updateData.status;
-    if (updateData.priority !== undefined) task.priority = updateData.priority;
-    if (updateData.dueDate !== undefined) task.dueDate = updateData.dueDate;
+    const task = db.tasks[taskIndex];
+
+    // Only update provided fields
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] !== undefined) {
+        task[key] = updateData[key];
+      }
+    });
 
     task.updatedAt = new Date();
+
     return task;
   }
 
-  static delete(taskId, userId) {
-    const index = db.tasks.findIndex(t => t.id === taskId && t.userId === userId);
+  static delete(taskId) {
+    const index = db.tasks.findIndex(t => t.id === taskId);
+
     if (index === -1) return false;
+
     db.tasks.splice(index, 1);
     return true;
   }
 
-  static getStats(userId) {
-    const tasks = db.tasks.filter(t => t.userId === userId);
-    return {
-      total: tasks.length,
-      pending: tasks.filter(t => t.status === 'pending').length,
-      in_progress: tasks.filter(t => t.status === 'in_progress').length,
-      completed: tasks.filter(t => t.status === 'completed').length,
-      high_priority: tasks.filter(t => t.priority === 'high').length
-    };
+  static count(filters = {}) {
+    return this.findAll(filters).length;
   }
 }
 

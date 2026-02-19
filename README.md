@@ -1,144 +1,170 @@
-# 📝 Task Manager API
+# Task Manager API
 
-Complete REST API for task management with JWT authentication and role-based access control.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## 🚀 Features
+> Production-grade REST API for task management with enterprise security patterns
 
-- ✅ JWT authentication with roles (admin/user)
-- ✅ Full CRUD operations for tasks
-- ✅ Filters, pagination, and search
-- ✅ Route protection with middleware
-- ✅ Password hashing with bcrypt
-- ✅ Data validation
+## 🌐 Live Demo
 
-## 🛠️ Technologies
+- **API:** `https://task-api-prod.onrender.com/api/v1`
+- **Documentation:** `https://task-api-prod.onrender.com/api-docs`
+- **Health:** `https://task-api-prod.onrender.com/health`
 
-- Node.js
-- Express.js
-- JWT (jsonwebtoken)
-- bcrypt
+## 🏗️ Architecture
 
-## 📦 Installation
+This API follows **Clean Architecture** principles with clear separation of concerns:
+```
+┌─────────────────┐
+│   HTTP Layer    │  Controllers (handle requests/responses)
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│ Business Logic  │  Services (orchestrate operations)
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│  Data Access    │  Repositories (abstract persistence)
+└────────┬────────┘
+         │
+┌────────▼────────┐
+│   Data Store    │  Models (structure data)
+└─────────────────┘
+```
 
-1. Clone the repository
-```bash
+### Why This Structure?
+
+- **Testability**: Each layer can be unit tested independently
+- **Maintainability**: Business logic separate from HTTP concerns
+- **Flexibility**: Easy to swap data sources (in-memory → PostgreSQL → MongoDB)
+- **Professional Standard**: Industry best practice for Node.js APIs
+
+## ✨ Features
+
+### Core Functionality
+- ✅ User authentication with JWT
+- ✅ Complete task CRUD operations
+- ✅ Advanced filtering (status, priority, search)
+- ✅ Pagination with metadata
+- ✅ Task ownership validation
+- ✅ Statistics endpoint
+
+### Security
+- ✅ Helmet.js security headers
+- ✅ Rate limiting (5 req/15min auth, 100 req/15min API)
+- ✅ Input validation and sanitization
+- ✅ XSS protection
+- ✅ CORS configuration
+- ✅ Password hashing (bcrypt cost 10)
+
+### Developer Experience
+- ✅ OpenAPI/Swagger documentation
+- ✅ Structured error handling
+- ✅ Request logging (Winston)
+- ✅ Environment-based configuration
+- ✅ Graceful shutdown
+- ✅ Health check endpoint
+
+## 🚀 Quick Start
+
+\`\`\`bash
+# Clone repository
 git clone https://github.com/MrDanLee/task-manager-api.git
 cd task-manager-api
-```
 
-2. Install dependencies
-```bash
+# Install dependencies
 npm install
-```
 
-3. Configure environment variables
-```bash
+# Configure environment
 cp .env.example .env
 # Edit .env with your settings
-```
 
-4. Start the server
-```bash
+# Start development server
 npm run dev
-```
 
-Server will run at `http://localhost:3000`
+# Visit documentation
+open http://localhost:3000/api-docs
+\`\`\`
 
-## 🔗 Endpoints
+## 📚 API Documentation
 
-### Authentication
+Interactive documentation is available at `/api-docs` when the server is running.
 
-**Register**
-```http
-POST /api/auth/register
-Content-Type: application/json
+### Quick Examples
 
-{
-  "name": "Daniel Lozano",
-  "email": "daniel@example.com",
-  "password": "password123"
-}
-```
+#### Authentication
+\`\`\`bash
+# Register
+curl -X POST http://localhost:3000/api/v1/auth/register \\
+  -H "Content-Type: application/json" \\
+  -d '{"name":"John Doe","email":"john@example.com","password":"secure123"}'
 
-**Login**
-```http
-POST /api/auth/login
-Content-Type: application/json
+# Login
+curl -X POST http://localhost:3000/api/v1/auth/login \\
+  -H "Content-Type: application/json" \\
+  -d '{"email":"john@example.com","password":"secure123"}'
+\`\`\`
 
-{
-  "email": "daniel@example.com",
-  "password": "password123"
-}
-```
+#### Tasks
+\`\`\`bash
+# Create task
+curl -X POST http://localhost:3000/api/v1/tasks \\
+  -H "Authorization: Bearer YOUR_TOKEN" \\
+  -H "Content-Type: application/json" \\
+  -d '{"title":"Complete documentation","priority":"high"}'
 
-**Get profile**
-```http
-GET /api/auth/me
-Authorization: Bearer {token}
-```
+# List tasks (with pagination)
+curl "http://localhost:3000/api/v1/tasks?page=1&limit=10&status=pending" \\
+  -H "Authorization: Bearer YOUR_TOKEN"
+\`\`\`
 
-### Tasks
+## 🛠️ Tech Stack
 
-**List tasks** (with filters and pagination)
-```http
-GET /api/tasks?status=pending&priority=high
-Authorization: Bearer {token}
-```
+- **Runtime:** Node.js 18+
+- **Framework:** Express.js 4.x
+- **Authentication:** JWT (jsonwebtoken)
+- **Validation:** express-validator
+- **Security:** Helmet, express-rate-limit
+- **Logging:** Winston
+- **Documentation:** Swagger/OpenAPI 3.0
+- **Testing:** Jest + Supertest (coming in delivery 2)
 
-**Create task**
-```http
-POST /api/tasks
-Authorization: Bearer {token}
-Content-Type: application/json
+## 📁 Project Structure
 
-{
-  "title": "Complete project",
-  "description": "Finish the task API",
-  "status": "in_progress",
-  "priority": "high",
-  "dueDate": "2025-12-31"
-}
-```
+\`\`\`
+src/
+├── config/           # Configuration (logger, swagger)
+├── controllers/      # HTTP request handlers
+├── services/         # Business logic layer
+├── repositories/     # Data access layer
+├── models/           # Data models
+├── routes/           # Route definitions
+├── middlewares/      # Custom middleware
+├── validators/       # Input validation
+├── utils/            # Helper functions
+└── app.js            # Express app setup
 
-**Get task**
-```http
-GET /api/tasks/:id
-Authorization: Bearer {token}
-```
+tests/
+├── unit/             # Unit tests (delivery 2)
+└── integration/      # Integration tests (delivery 2)
+\`\`\`
 
-**Update task**
-```http
-PUT /api/tasks/:id
-Authorization: Bearer {token}
-Content-Type: application/json
+## 🔐 Environment Variables
 
-{
-  "status": "completed"
-}
-```
-
-**Delete task**
-```http
-DELETE /api/tasks/:id
-Authorization: Bearer {token}
-```
-
-**Get statistics**
-```http
-GET /api/tasks/stats
-Authorization: Bearer {token}
-```
-
-## 🧪 Testing with Postman
-
-1. Register a user with `/api/auth/register`
-2. Login with `/api/auth/login`
-3. Copy the received token
-4. Use it in the header `Authorization: Bearer {token}`
+\`\`\`env
+PORT=3000
+NODE_ENV=development
+JWT_SECRET=your-secret-min-32-characters
+JWT_EXPIRE=7d
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
+AUTH_RATE_LIMIT_MAX=5
+CORS_ORIGIN=*
+LOG_LEVEL=info
+\`\`\`
 
 ## 👤 Author
 
-Daniel Andrés Lozano Meriño
+**Daniel Andrés Lozano Meriño**
 - GitHub: [@MrDanLee](https://github.com/MrDanLee)
 - Email: daniel23lozano@gmail.com
 - Portfolio: [mrdanlee.github.io](https://mrdanlee.github.io)

@@ -1,9 +1,19 @@
 const db = require('../config/database');
 const bcrypt = require('bcryptjs');
 
+/**
+ * User model - Data structure and basic operations
+ * 
+ * Note: In a real app with an ORM like Sequelize or Prisma,
+ * these methods would be replaced by ORM model methods.
+ * This implementation shows the interface you'd work with.
+ */
+
 class User {
   static async create(userData) {
     const { name, email, password } = userData;
+
+    // Hash with cost factor of 10 - good security/performance balance
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = {
@@ -12,7 +22,8 @@ class User {
       email,
       password: hashedPassword,
       role: 'user',
-      createdAt: new Date()
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
 
     db.users.push(user);
@@ -31,13 +42,12 @@ class User {
     return await bcrypt.compare(candidatePassword, hashedPassword);
   }
 
-  static getPublicData(user) {
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      role: user.role
-    };
+  /**
+   * Returns user data safe for API responses (no password)
+   */
+  static toSafeObject(user) {
+    const { password, ...safeUser } = user;
+    return safeUser;
   }
 }
 
