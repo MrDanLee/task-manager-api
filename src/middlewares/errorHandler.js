@@ -34,7 +34,7 @@ const errorConverter = (err, req, res, next) => {
 /**
  * Final error handler
  */
-const errorHandler = (err, req, res, next) => {
+const errorHandler = (err, req, res, _next) => {
   let { statusCode, message } = err;
 
   // Log error details

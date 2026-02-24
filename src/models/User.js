@@ -46,7 +46,7 @@ class User {
    * Returns user data safe for API responses (no password)
    */
   static toSafeObject(user) {
-    const { password, ...safeUser } = user;
+    const { password: _, ...safeUser } = user;
     return safeUser;
   }
 }

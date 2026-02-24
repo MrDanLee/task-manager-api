@@ -25,7 +25,7 @@ const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   // Skip rate limiting in test environment
-  skip: (req) => process.env.NODE_ENV === 'test'
+  skip: (_req) => process.env.NODE_ENV === 'test'
 });
 
 /**
@@ -38,7 +38,7 @@ const apiLimiter = rateLimit({
   message: 'Too many requests, please try again later',
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req) => process.env.NODE_ENV === 'test'
+  skip: (_req) => process.env.NODE_ENV === 'test'
 });
 
 module.exports = { authLimiter, apiLimiter };
