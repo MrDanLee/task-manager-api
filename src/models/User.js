@@ -46,7 +46,8 @@ class User {
    * Returns user data safe for API responses (no password)
    */
   static toSafeObject(user) {
-    const { password: _, ...safeUser } = user;
+    // eslint-disable-next-line no-unused-vars
+    const { password, ...safeUser } = user;
     return safeUser;
   }
 }
