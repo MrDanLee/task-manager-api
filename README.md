@@ -8,7 +8,7 @@
 
 ## 🌐 Live Demo
 
-- **API:** `https://task-api-prod.onrender.com/api/v1`
+- **API:** `https://task-manager-api-8jb5.onrender.com`
 - **Documentation:** `https://task-api-prod.onrender.com/api-docs`
 - **Health:** `https://task-api-prod.onrender.com/health`
 
@@ -268,7 +268,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - GitHub: [@MrDanLee](https://github.com/MrDanLee)
 - Email: daniel23lozano@gmail.com
-- Portfolio: [mrdanlee.github.io](https://mrdanlee.github.io)
 
 ## 🙏 Acknowledgments
 
